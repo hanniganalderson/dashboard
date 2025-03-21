@@ -3,11 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 
 // These will be loaded from environment variables in production
 // For now, we're using fallbacks that allow the app to run without errors
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy_key';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 // Create a single supabase client for the entire app
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Mock data for demo purposes
 const mockFinancialAccounts = [
@@ -17,65 +17,37 @@ const mockFinancialAccounts = [
   { id: '4', name: 'Cryptocurrency', type: 'crypto', balance: 12000, last_updated: new Date().toISOString() },
 ];
 
-const mockBooks = [
-  { 
-    id: '1', 
-    title: 'Atomic Habits', 
-    author: 'James Clear', 
-    status: 'completed', 
-    date_added: '2023-09-01',
-    date_completed: '2023-10-15',
-    summary: 'A guide about building good habits and breaking bad ones.'
-  },
-  { 
-    id: '2', 
-    title: 'Deep Work', 
-    author: 'Cal Newport', 
-    status: 'completed', 
-    date_added: '2023-11-01',
-    date_completed: '2023-12-10',
-    summary: 'Rules for focused success in a distracted world.'
-  },
-  { 
-    id: '3', 
-    title: 'The Psychology of Money', 
-    author: 'Morgan Housel', 
-    status: 'reading', 
-    date_added: '2024-01-15',
-    summary: 'Timeless lessons on wealth, greed, and happiness.'
-  }
-];
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  status: 'reading' | 'completed' | 'want-to-read';
+  date_added: string;
+  date_completed?: string;
+  summary?: string;
+  takeaways?: string;
+}
 
-const mockProjects = [
-  {
-    id: '1',
-    name: 'Personal Dashboard',
-    description: 'A comprehensive dashboard for tracking personal metrics and goals',
-    status: 'in-progress',
-    progress: 75,
-    start_date: '2024-01-01',
-    target_date: '2024-04-01',
-    tasks: [
-      { id: '1', title: 'Design UI components', completed: true },
-      { id: '2', title: 'Implement data fetching', completed: true },
-      { id: '3', title: 'Add authentication', completed: false }
-    ]
-  },
-  {
-    id: '2',
-    name: 'Fitness App',
-    description: 'Mobile application for tracking workouts and nutrition',
-    status: 'completed',
-    progress: 100,
-    start_date: '2023-08-01',
-    target_date: '2023-11-01',
-    tasks: [
-      { id: '1', title: 'Design UI/UX', completed: true },
-      { id: '2', title: 'Implement core features', completed: true },
-      { id: '3', title: 'Beta testing', completed: true }
-    ]
-  }
-];
+export interface Course {
+  id: string;
+  name: string;
+  institution: string;
+  status: 'in-progress' | 'completed' | 'planned';
+  start_date?: string;
+  end_date?: string;
+  credits?: number;
+  notes?: string;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold';
+  progress: number;
+  start_date: string;
+  target_date?: string;
+}
 
 // Function to fetch financial accounts data
 export async function getFinancialAccounts() {
@@ -100,36 +72,45 @@ export async function getFinancialAccounts() {
 
 // Function to fetch book data
 export async function getBooks() {
-  try {
-    const { data, error } = await supabase
-      .from('books')
-      .select('*');
-    
-    if (error || !data || data.length === 0) {
-      return mockBooks;
-    }
-    
-    return data;
-  } catch (error) {
+  const { data, error } = await supabase
+    .from('books')
+    .select('*')
+    .order('date_added', { ascending: false });
+
+  if (error) {
     console.error('Error fetching books:', error);
-    return mockBooks;
+    return [];
   }
+
+  return data as Book[];
+}
+
+// Function to fetch course data
+export async function getCourses() {
+  const { data, error } = await supabase
+    .from('courses')
+    .select('*')
+    .order('start_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching courses:', error);
+    return [];
+  }
+
+  return data as Course[];
 }
 
 // Function to fetch project data
 export async function getProjects() {
-  try {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*');
-    
-    if (error || !data || data.length === 0) {
-      return mockProjects;
-    }
-    
-    return data;
-  } catch (error) {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('start_date', { ascending: false });
+
+  if (error) {
     console.error('Error fetching projects:', error);
-    return mockProjects;
+    return [];
   }
+
+  return data as Project[];
 }

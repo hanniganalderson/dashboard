@@ -6,30 +6,7 @@ import { FiBook, FiSearch, FiBookmark, FiEdit3, FiCheckCircle } from 'react-icon
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import Bookshelf from '@/components/knowledge/Bookshelf';
 import CourseTracker from '@/components/knowledge/CourseTracker';
-import { getBooks, getCourses } from '@/lib/supabase';
-
-// Define types for our data
-interface Book {
-  id: string;
-  title: string;
-  author: string;
-  status: 'reading' | 'completed' | 'want-to-read';
-  date_added: string;
-  date_completed?: string;
-  summary?: string;
-  takeaways?: string;
-}
-
-interface Course {
-  id: string;
-  name: string;
-  institution: string;
-  status: 'in-progress' | 'completed' | 'planned';
-  start_date?: string;
-  end_date?: string;
-  credits?: number;
-  notes?: string;
-}
+import { getBooks, getCourses, type Book, type Course } from '@/lib/supabase';
 
 export default function KnowledgePage() {
   const [searchTerm, setSearchTerm] = useState('');

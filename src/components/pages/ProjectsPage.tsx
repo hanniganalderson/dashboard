@@ -6,23 +6,7 @@ import { FiGitBranch, FiClock, FiCheckCircle, FiAlertCircle, FiList, FiPauseCirc
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import ProjectCard from '@/components/projects/ProjectCard';
 import GoalTracker from '@/components/projects/GoalTracker';
-import { getProjects } from '@/lib/supabase';
-
-// Define types for our project data
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold';
-  progress: number;
-  start_date: string;
-  target_date?: string;
-  tasks: {
-    id: string;
-    title: string;
-    completed: boolean;
-  }[];
-}
+import { getProjects, type Project } from '@/lib/supabase';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -46,13 +30,7 @@ export default function ProjectsPage() {
             status: 'in-progress',
             progress: 75,
             start_date: '2024-01-01',
-            target_date: '2024-04-01',
-            tasks: [
-              { id: '1', title: 'Design UI components', completed: true },
-              { id: '2', title: 'Implement data fetching', completed: true },
-              { id: '3', title: 'Add authentication', completed: false },
-              { id: '4', title: 'Deploy to production', completed: false }
-            ]
+            target_date: '2024-04-01'
           },
           {
             id: '2',
@@ -61,13 +39,7 @@ export default function ProjectsPage() {
             status: 'completed',
             progress: 100,
             start_date: '2023-12-01',
-            target_date: '2024-03-15',
-            tasks: [
-              { id: '1', title: 'Design UI/UX', completed: true },
-              { id: '2', title: 'Build core features', completed: true },
-              { id: '3', title: 'Test and debug', completed: true },
-              { id: '4', title: 'App store submission', completed: true }
-            ]
+            target_date: '2024-03-15'
           },
           {
             id: '3',
@@ -76,13 +48,7 @@ export default function ProjectsPage() {
             status: 'on-hold',
             progress: 30,
             start_date: '2024-02-01',
-            target_date: '2024-05-01',
-            tasks: [
-              { id: '1', title: 'Design layout', completed: true },
-              { id: '2', title: 'Create components', completed: false },
-              { id: '3', title: 'Add content', completed: false },
-              { id: '4', title: 'Optimize performance', completed: false }
-            ]
+            target_date: '2024-05-01'
           }
         ]);
       } finally {
